@@ -48,17 +48,51 @@ Data is free. With Gemini Flash on the AI Studio free tier, daily personal use c
 - `bot.py` — Telegram wiring + provider switch + /suggest command
 
 ## Research module (`research/`)
-Strategy backtesting and daily scanning, built on backtesting.py:
-- `strategies.py` — four starter strategies (sma_cross, momentum, mean_reversion, breakout) as plugin classes; add your own by subclassing Strategy
-- `indicators.py` — SMA/EMA/RSI/ATR/ADX in plain pandas
-- `run_backtest.py` — costed backtests vs buy-and-hold: `python run_backtest.py --tickers RELIANCE.NS TCS.NS AAPL --strategy all --years 8`
-- `scan.py` — today's entry signals from the same rules: `python scan.py --tickers RELIANCE.NS TCS.NS INFY.NS AAPL`
+This is the actively developed half of the project — LLM-free strategy backtesting, live signal scanning, and paper trading across NSE stocks, US stocks, and Indian mutual funds. Pure Python: pandas, numpy, yfinance, backtesting.py. The Telegram bot above is parked; this is where current work happens.
 
-Workflow: backtest first, only scan with strategies that PASS, paper-trade signals for 2-3 months before money. Default commission (0.12%/side) approximates Indian delivery costs incl. STT and slippage.
+### Strategy library
+- **Daily/swing** (`strategies.py`): `sma_cross`, `momentum`, `mean_reversion`, `breakout`, `clenow_trend`, `zscore_reversion` — plugin classes, add your own by subclassing `Strategy`. Plus standalone scripts: `dual_momentum.py` (Antonacci-style asset-class rotation), `cross_sectional_momentum.py` (ranks a stock universe by relative strength, not absolute direction), `low_volatility_factor.py` (ranks by trailing volatility — the "calm beats volatile" anomaly).
+- **Intraday** (`strategies_intraday.py`, 5-minute bars, hard square-off at 15:20 IST, no overnight positions): `intraday_momentum`, `orb_breakout` (opening-range breakout), `vwap_breakout` (VWAP reclaim), `range_reversion` (mean-reversion, the one non-directional strategy in the set).
+
+### Backtesting
+- `run_backtest.py` (daily) / `run_backtest_intraday.py` (intraday) — costed backtests vs buy-and-hold. **Always pass `--walkforward --windows 4`** (or more) — a single full-window verdict is known to look better than it is; splitting into several sequential windows and requiring a pass in each one is the only check that's caught every false positive so far.
+- Example: `python run_backtest.py --tickers RELIANCE.NS TCS.NS AAPL --strategy all --years 8`
+
+### Live scanning
+Every scanner reads its fired signal off the actual backtest trade log — never a hand-re-derived copy of the entry rule, so it can't silently drift out of sync with what was actually backtested.
+- `scan_daily.py` — NSE stocks, NIFTY 500 universe. `.NS` suffix is optional (`RELIANCE` auto-resolves).
+- `scan_daily_us.py` — US stocks, S&P 500 universe.
+- `scan_intraday.py` — NSE stocks, NIFTY 500 universe, 5-minute bars.
+- `scan_funds.py` — Indian mutual funds (mfapi.in), universe live-discovered from mfapi.in's scheme catalog (not hardcoded).
+
+All four support `--top N` (ranked scan of the whole universe, only actionable signals, never padded) and auto-select the best currently-firing strategy per ticker if you don't force one with `--strategy`.
+
+### API
+`cd research && uvicorn api:app --reload --port 8000` — interactive docs at `http://localhost:8000/docs`.
+- `GET /signal/{symbol}`, `GET /fund/{query}` — single-ticker/fund signal
+- `GET /top-stocks`, `GET /top-funds` — ranked scan of the default universe
+- `GET /paper/daily/allocation`, `GET /paper/daily-us/allocation`, `GET /paper/allocation` — current paper-trading holdings (read-only; doesn't trigger a trading cycle itself)
+
+### Paper trading
+Four independent simulated portfolios — own starting capital, own state file, nothing shared between them:
+
+| Tracker | Market | Capital | Cadence |
+|---|---|---|---|
+| `paper_trader.py` | NSE intraday | ₹1,00,000 | every 15-30 min, market hours (cron-friendly) |
+| `paper_trader_daily.py` | NSE daily/swing | ₹1,00,000 | once/day |
+| `paper_trader_funds.py` | Indian mutual funds | ₹1,00,000 | once/day |
+| `paper_trader_daily_us.py` | US (S&P 500) | $100,000 (not FX-converted) | once/day |
+
+Each: `--run` (check exits, open new positions against live signals) / `--report` (performance anytime) / `--reset --confirm` (wipe and restart). Position sizing is risk-based (default 1% of current capital per trade) and capped at 25% of total funds per position — no single signal can dominate the portfolio regardless of what the raw risk math would otherwise allow.
+
+### Honest status
+Every strategy here is walk-forward tested, not just backtested once, before being trusted — and most have failed that test. As of this writing: none of the daily or intraday rule-based strategies have a clean, consistent pass across multiple windows on the NSE large-cap universe tested; buy-and-hold has beaten all of them more often than not. The most promising lead so far is `low_volatility_factor.py`, which hasn't outright failed any window yet (though it isn't fully consistent either). Paper trading exists specifically to gather real, un-curve-fitted evidence before any real money is involved — nothing produced by this module should be read as a recommendation to act on. See `CLAUDE.md`'s Evaluation history for the full blow-by-blow.
+
+Default commission (0.12%/side for NSE, ~0.05% for US) approximates real delivery/brokerage costs; override with `--commission` on any backtest or scan.
 
 ## Known limits of free data
 - yfinance is unofficial scraping of Yahoo Finance — it occasionally rate-limits or breaks after Yahoo changes things; pin/upgrade the package when that happens.
-- NSE data via Yahoo is delayed ~15 min. Fine for research, not for intraday trading.
+- NSE data via Yahoo is delayed ~15 min. Fine for backtesting and paper trading; a known, accepted limitation for the intraday track specifically (see Research module) — not something to trade real money against without a faster feed.
 - mfapi.in NAVs update once daily (as AMFI publishes them).
 
 ## Ideas for v2
