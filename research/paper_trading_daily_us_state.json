@@ -1,0 +1,147 @@
+{
+  "starting_capital": 100000.0,
+  "cash": 46582.789624023426,
+  "positions": {
+    "STE": {
+      "strategy": "sma_cross",
+      "entry_price": 217.02,
+      "quantity": 57,
+      "stop_loss": 199.66,
+      "target1": 234.38,
+      "entry_time": "2026-07-21T08:13:24.005914+00:00",
+      "capital_allocated": 12370.14
+    },
+    "GILD": {
+      "strategy": "sma_cross",
+      "entry_price": 134.28,
+      "quantity": 82,
+      "stop_loss": 122.19,
+      "target1": 146.37,
+      "entry_time": "2026-07-21T08:13:24.005921+00:00",
+      "capital_allocated": 11010.96
+    },
+    "OKE": {
+      "strategy": "sma_cross",
+      "entry_price": 93.57,
+      "quantity": 141,
+      "stop_loss": 86.49,
+      "target1": 100.65,
+      "entry_time": "2026-07-21T08:13:24.005937+00:00",
+      "capital_allocated": 13193.37
+    },
+    "META": {
+      "strategy": "sma_cross",
+      "entry_price": 646.7,
+      "quantity": 12,
+      "stop_loss": 566.98,
+      "target1": 726.42,
+      "entry_time": "2026-07-21T08:13:24.005941+00:00",
+      "capital_allocated": 7760.4
+    },
+    "GDDY": {
+      "strategy": "sma_cross",
+      "entry_price": 92.51,
+      "quantity": 98,
+      "stop_loss": 82.38,
+      "target1": 102.64,
+      "entry_time": "2026-07-21T08:13:24.005945+00:00",
+      "capital_allocated": 9065.98
+    }
+  },
+  "closed_trades": [
+    {
+      "symbol": "STE",
+      "strategy": "sma_cross",
+      "entry_price": 217.02,
+      "exit_price": 214.47000122070312,
+      "quantity": 57,
+      "pnl": -145.35,
+      "pnl_pct": -1.18,
+      "entry_time": "2026-07-21T08:01:05.834458+00:00",
+      "exit_time": "2026-07-21T08:11:47.611923+00:00",
+      "exit_reason": "strategy_exit"
+    },
+    {
+      "symbol": "GILD",
+      "strategy": "sma_cross",
+      "entry_price": 134.28,
+      "exit_price": 133.2100067138672,
+      "quantity": 82,
+      "pnl": -87.74,
+      "pnl_pct": -0.8,
+      "entry_time": "2026-07-21T08:01:05.834464+00:00",
+      "exit_time": "2026-07-21T08:11:48.039607+00:00",
+      "exit_reason": "strategy_exit"
+    },
+    {
+      "symbol": "OKE",
+      "strategy": "sma_cross",
+      "entry_price": 93.57,
+      "exit_price": 93.55999755859375,
+      "quantity": 141,
+      "pnl": -1.41,
+      "pnl_pct": -0.01,
+      "entry_time": "2026-07-21T08:01:05.834479+00:00",
+      "exit_time": "2026-07-21T08:11:48.556820+00:00",
+      "exit_reason": "strategy_exit"
+    },
+    {
+      "symbol": "META",
+      "strategy": "sma_cross",
+      "entry_price": 646.7,
+      "exit_price": 645.8499755859375,
+      "quantity": 12,
+      "pnl": -10.2,
+      "pnl_pct": -0.13,
+      "entry_time": "2026-07-21T08:01:05.834483+00:00",
+      "exit_time": "2026-07-21T08:11:48.986692+00:00",
+      "exit_reason": "strategy_exit"
+    },
+    {
+      "symbol": "GDDY",
+      "strategy": "sma_cross",
+      "entry_price": 92.51,
+      "exit_price": 94.83999633789062,
+      "quantity": 98,
+      "pnl": 228.34,
+      "pnl_pct": 2.52,
+      "entry_time": "2026-07-21T08:01:05.834487+00:00",
+      "exit_time": "2026-07-21T08:11:49.415326+00:00",
+      "exit_reason": "strategy_exit"
+    }
+  ],
+  "strategy_stats": {
+    "sma_cross": {
+      "trades": 5,
+      "wins": 1,
+      "total_pnl": -16.36
+    },
+    "momentum": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "mean_reversion": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "breakout": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "clenow_trend": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "zscore_reversion": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    }
+  },
+  "created_at": "2026-07-21T07:59:21.266745+00:00",
+  "last_run": "2026-07-21T08:13:24.005946+00:00"
+}

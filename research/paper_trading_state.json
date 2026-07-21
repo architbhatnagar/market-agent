@@ -1,0 +1,91 @@
+{
+  "starting_capital": 100000.0,
+  "cash": 100467.86999938964,
+  "positions": {},
+  "closed_trades": [
+    {
+      "symbol": "JPPOWER.NS",
+      "strategy": "vwap_breakout",
+      "entry_price": 17.75,
+      "exit_price": 17.719999313354492,
+      "quantity": 1,
+      "pnl": -0.03,
+      "pnl_pct": -0.17,
+      "entry_time": "2026-07-21T08:07:23.191135+00:00",
+      "exit_time": "2026-07-21T08:15:05.757924+00:00",
+      "exit_reason": "strategy_exit"
+    },
+    {
+      "symbol": "IDEA.NS",
+      "strategy": "intraday_momentum",
+      "entry_price": 13.59,
+      "exit_price": 13.55,
+      "quantity": 1,
+      "pnl": -0.04,
+      "pnl_pct": -0.29,
+      "entry_time": "2026-07-21T08:38:06.065627+00:00",
+      "exit_time": "2026-07-21T09:15:05.582901+00:00",
+      "exit_reason": "stop_loss"
+    },
+    {
+      "symbol": "KOTAKBANK.NS",
+      "strategy": "orb_breakout",
+      "entry_price": 384.45,
+      "exit_price": 386.25,
+      "quantity": 260,
+      "pnl": 468.0,
+      "pnl_pct": 0.47,
+      "entry_time": "2026-07-21T05:36:37.162084+00:00",
+      "exit_time": "2026-07-21T10:00:04.607678+00:00",
+      "exit_reason": "eod_square_off"
+    },
+    {
+      "symbol": "YESBANK.NS",
+      "strategy": "orb_breakout",
+      "entry_price": 23.29,
+      "exit_price": 23.200000762939453,
+      "quantity": 1,
+      "pnl": -0.09,
+      "pnl_pct": -0.39,
+      "entry_time": "2026-07-21T07:07:57.875950+00:00",
+      "exit_time": "2026-07-21T10:00:05.633045+00:00",
+      "exit_reason": "eod_square_off"
+    },
+    {
+      "symbol": "JPPOWER.NS",
+      "strategy": "vwap_breakout",
+      "entry_price": 17.69,
+      "exit_price": 17.719999313354492,
+      "quantity": 1,
+      "pnl": 0.03,
+      "pnl_pct": 0.17,
+      "entry_time": "2026-07-21T09:53:02.210190+00:00",
+      "exit_time": "2026-07-21T10:00:06.198088+00:00",
+      "exit_reason": "eod_square_off"
+    }
+  ],
+  "strategy_stats": {
+    "intraday_momentum": {
+      "trades": 1,
+      "wins": 0,
+      "total_pnl": -0.04
+    },
+    "orb_breakout": {
+      "trades": 2,
+      "wins": 1,
+      "total_pnl": 467.91
+    },
+    "vwap_breakout": {
+      "trades": 2,
+      "wins": 1,
+      "total_pnl": -0.0
+    },
+    "range_reversion": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    }
+  },
+  "created_at": "2026-07-20T11:04:52.615062+00:00",
+  "last_run": "2026-07-21T10:23:28.003555+00:00"
+}

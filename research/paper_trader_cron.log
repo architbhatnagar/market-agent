@@ -1,0 +1,295 @@
+=== Tue Jul 21 11:12:57 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 43.0,
+  "open_position_count": 1,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 11:15:01 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 43.0,
+  "open_position_count": 1,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 11:30:01 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 43.0,
+  "open_position_count": 1,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 11:45:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 43.0,
+  "open_position_count": 1,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 12:00:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 43.0,
+  "open_position_count": 1,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 12:15:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 43.0,
+  "open_position_count": 1,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 12:30:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [
+    {
+      "symbol": "YESBANK.NS",
+      "strategy": "orb_breakout",
+      "entry_price": 23.29,
+      "quantity": 1,
+      "capital_allocated": 23.29
+    }
+  ],
+  "cash": 19.71,
+  "open_position_count": 2,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 12:45:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 19.71,
+  "open_position_count": 2,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 13:00:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 19.71,
+  "open_position_count": 2,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 13:15:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 19.71,
+  "open_position_count": 2,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 13:30:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [
+    {
+      "symbol": "JPPOWER.NS",
+      "strategy": "vwap_breakout",
+      "entry_price": 17.75,
+      "quantity": 1,
+      "capital_allocated": 17.75
+    }
+  ],
+  "cash": 1.96,
+  "open_position_count": 3,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 13:45:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [
+    {
+      "symbol": "JPPOWER.NS",
+      "strategy": "vwap_breakout",
+      "entry_price": 17.75,
+      "exit_price": 17.719999313354492,
+      "quantity": 1,
+      "pnl": -0.03,
+      "pnl_pct": -0.17,
+      "entry_time": "2026-07-21T08:07:23.191135+00:00",
+      "exit_time": "2026-07-21T08:15:05.757924+00:00",
+      "exit_reason": "strategy_exit"
+    }
+  ],
+  "opened_positions": [],
+  "cash": 19.68,
+  "open_position_count": 2,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 14:00:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [
+    {
+      "symbol": "IDEA.NS",
+      "strategy": "intraday_momentum",
+      "entry_price": 13.59,
+      "quantity": 1,
+      "capital_allocated": 13.59
+    }
+  ],
+  "cash": 6.09,
+  "open_position_count": 3,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 14:15:01 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 6.09,
+  "open_position_count": 3,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 14:30:01 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 6.09,
+  "open_position_count": 3,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 14:45:01 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [
+    {
+      "symbol": "IDEA.NS",
+      "strategy": "intraday_momentum",
+      "entry_price": 13.59,
+      "exit_price": 13.55,
+      "quantity": 1,
+      "pnl": -0.04,
+      "pnl_pct": -0.29,
+      "entry_time": "2026-07-21T08:38:06.065627+00:00",
+      "exit_time": "2026-07-21T09:15:05.582901+00:00",
+      "exit_reason": "stop_loss"
+    }
+  ],
+  "opened_positions": [],
+  "cash": 19.64,
+  "open_position_count": 2,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 15:00:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 19.64,
+  "open_position_count": 2,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 15:15:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [
+    {
+      "symbol": "JPPOWER.NS",
+      "strategy": "vwap_breakout",
+      "entry_price": 17.69,
+      "quantity": 1,
+      "capital_allocated": 17.69
+    }
+  ],
+  "cash": 1.95,
+  "open_position_count": 3,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 15:30:01 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [
+    {
+      "symbol": "KOTAKBANK.NS",
+      "strategy": "orb_breakout",
+      "entry_price": 384.45,
+      "exit_price": 386.25,
+      "quantity": 260,
+      "pnl": 468.0,
+      "pnl_pct": 0.47,
+      "entry_time": "2026-07-21T05:36:37.162084+00:00",
+      "exit_time": "2026-07-21T10:00:04.607678+00:00",
+      "exit_reason": "eod_square_off"
+    },
+    {
+      "symbol": "YESBANK.NS",
+      "strategy": "orb_breakout",
+      "entry_price": 23.29,
+      "exit_price": 23.200000762939453,
+      "quantity": 1,
+      "pnl": -0.09,
+      "pnl_pct": -0.39,
+      "entry_time": "2026-07-21T07:07:57.875950+00:00",
+      "exit_time": "2026-07-21T10:00:05.633045+00:00",
+      "exit_reason": "eod_square_off"
+    },
+    {
+      "symbol": "JPPOWER.NS",
+      "strategy": "vwap_breakout",
+      "entry_price": 17.69,
+      "exit_price": 17.719999313354492,
+      "quantity": 1,
+      "pnl": 0.03,
+      "pnl_pct": 0.17,
+      "entry_time": "2026-07-21T09:53:02.210190+00:00",
+      "exit_time": "2026-07-21T10:00:06.198088+00:00",
+      "exit_reason": "eod_square_off"
+    }
+  ],
+  "opened_positions": [],
+  "cash": 100467.87,
+  "open_position_count": 0,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}
+=== Tue Jul 21 15:45:00 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 100467.87,
+  "open_position_count": 0,
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. Strategies here are UNVALIDATED (no walk-forward pass yet, see CLAUDE.md Evaluation history); this engine is itself the validation step CLAUDE.md calls for before real money, not a substitute for it. Exit detection is an approximation (checked periodically against current price, not a live stop order) \u2014 see check_exits() docstring."
+}

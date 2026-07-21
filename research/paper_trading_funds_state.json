@@ -1,0 +1,40 @@
+{
+  "starting_capital": 100000.0,
+  "cash": 100000.0,
+  "positions": {},
+  "closed_trades": [],
+  "strategy_stats": {
+    "sma_cross": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "momentum": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "mean_reversion": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "breakout": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "clenow_trend": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    },
+    "zscore_reversion": {
+      "trades": 0,
+      "wins": 0,
+      "total_pnl": 0.0
+    }
+  },
+  "created_at": "2026-07-20T11:50:22.303027+00:00",
+  "last_run": "2026-07-21T05:46:01.627413+00:00"
+}
