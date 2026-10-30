@@ -32,11 +32,13 @@ import argparse
 import json
 import os
 import warnings
-from datetime import datetime, timezone
+from datetime import datetime, time as dtime, timezone
+
+import pandas as pd
 
 from scan_intraday import (
     scan_ticker, top_n_signals, load_data, _rank_key,
-    ALL_INTRADAY_STRATEGIES, DEFAULT_UNIVERSE,
+    ALL_INTRADAY_STRATEGIES, DEFAULT_UNIVERSE, COMMISSION,
 )
 from strategies_intraday import SQUARE_OFF_TIME
 
@@ -49,6 +51,11 @@ MAX_POSITION_PCT = 25.0    # hard cap: no single position may exceed this % of t
 RISK_PCT = 1.0              # % of CURRENT cash risked per new position (compounds as equity moves)
 BETA_PRIOR = 3               # weak Bayesian prior (alpha=beta=3): neutral 0.5 win rate until real trades accumulate
 FULL_TRUST_AT_TRADES = 20   # live track record fully overrides backtest ranking once a strategy has this many paper trades
+MARKET_OPEN = dtime(9, 15)   # NSE continuous session start; no entries before this
+MAX_SIGNAL_AGE_MIN = 10      # a BUY whose entry bar started longer ago than this is stale (holiday / after close / slow scan) — skip it
+# Paper fills pay the SAME per-side cost the intraday backtest charges, so
+# the two can be compared like for like. Before 2026-10-16 paper P&L was
+# costless, which turned a losing strategy into +90% (see AUDIT.md §1).
 
 DISCLAIMER = (
     "Simulated paper trading only — no real money, no real orders. Strategies here "
@@ -147,22 +154,33 @@ def check_exits(state: dict) -> list:
         still_held = True
         try:
             result = scan_ticker(symbol, strategy, 100_000, RISK_PCT)  # capital arg unused for status check
-            still_held = result["count"] == 1 and result["signals"][0]["recommendation"].startswith("HOLD")
+            # A fresh "BUY" from the same strategy means it's (still or again)
+            # long this symbol — not a reason to exit. Treating BUY as "not
+            # held" made every stale BUY exit and re-buy the same position
+            # each cycle (209 churn trades, AUDIT.md §5).
+            still_held = result["count"] == 1 and (
+                result["signals"][0]["recommendation"].startswith("HOLD")
+                or result["signals"][0]["recommendation"] == "BUY"
+            )
         except Exception:
             pass  # can't confirm strategy state — fall back to stop-loss/EOD checks only this cycle
 
         if not (stop_hit or not still_held or eod):
             continue
 
-        exit_price = pos["stop_loss"] if stop_hit else current_price
-        pnl = (exit_price - pos["entry_price"]) * pos["quantity"]
-        state["cash"] += exit_price * pos["quantity"]
+        # Polled, not a resting stop order: if price is already through the
+        # stop, the fill is the price we actually see, not the stop level.
+        exit_price = min(pos["stop_loss"], current_price) if stop_hit else current_price
+        exit_cost = exit_price * pos["quantity"] * COMMISSION
+        pnl = (exit_price - pos["entry_price"]) * pos["quantity"] - pos.get("entry_cost", 0.0) - exit_cost
+        state["cash"] += exit_price * pos["quantity"] - exit_cost
 
         exit_reason = "stop_loss" if stop_hit else ("eod_square_off" if eod else "strategy_exit")
         trade = {
             "symbol": symbol, "strategy": strategy,
             "entry_price": pos["entry_price"], "exit_price": exit_price, "quantity": pos["quantity"],
-            "pnl": round(pnl, 2), "pnl_pct": round((exit_price / pos["entry_price"] - 1) * 100, 2),
+            "costs": round(pos.get("entry_cost", 0.0) + exit_cost, 2),
+            "pnl": round(pnl, 2), "pnl_pct": round(pnl / (pos["entry_price"] * pos["quantity"]) * 100, 2),
             "entry_time": pos["entry_time"], "exit_time": datetime.now(timezone.utc).isoformat(),
             "exit_reason": exit_reason,
         }
@@ -179,6 +197,14 @@ def check_exits(state: dict) -> list:
 def open_new_positions(state: dict) -> list:
     slots = MAX_POSITIONS - len(state["positions"])
     if slots <= 0:
+        return []
+    # Session guard: the cron also fires at 09:00, 15:30 and 15:45, and on NSE
+    # holidays. Off-session the data is frozen and the last BUY keeps being
+    # reported, so the old code bought stale prices and carried them overnight
+    # — 59% of the old run's gross P&L (AUDIT.md §2). Holidays are caught by
+    # the per-signal freshness check below (no new bars → every BUY is stale).
+    now_ist = datetime.now()  # system TZ is Asia/Kolkata
+    if now_ist.weekday() >= 5 or not (MARKET_OPEN <= now_ist.time() < SQUARE_OFF_TIME):
         return []
     held = set(state["positions"].keys())
     universe = [t for t in DEFAULT_UNIVERSE if t not in held]
@@ -207,9 +233,23 @@ def open_new_positions(state: dict) -> list:
             break
         if sig["recommendation"] != "BUY":
             continue  # only open on a FRESH entry, not an already-open HOLD from another strategy's window
-        quantity, capital_needed = sig["quantity"], sig["capital_allocation"]
-        if quantity <= 0 or capital_needed <= 0:
+        entry_bar = pd.Timestamp(sig["entry_time"])
+        if entry_bar.tzinfo is None:
+            entry_bar = entry_bar.tz_localize("Asia/Kolkata")
+        if pd.Timestamp.now(tz="Asia/Kolkata") - entry_bar > pd.Timedelta(minutes=MAX_SIGNAL_AGE_MIN):
+            continue  # stale: entry bar opened too long ago (holiday, frozen feed, slow scan)
+
+        # Fill at the price observed now, not the backtest's EntryPrice (the
+        # entry bar's OPEN, a median 8 / p90 23 min before we act — on a
+        # breakout that stale price is systematically better than reality,
+        # AUDIT.md §2). Stop/target stay at the strategy's levels.
+        fill = sig["current_price"]
+        if sig["stop_loss"] is not None and fill <= sig["stop_loss"]:
+            continue  # already through the stop by the time we'd fill
+        quantity = sig["quantity"]
+        if quantity <= 0:
             continue
+        capital_needed = round(quantity * fill, 2)
 
         # Hard concentration cap: risk-based sizing (scan_intraday.py) can
         # still allocate almost all available cash to one signal whenever
@@ -220,20 +260,22 @@ def open_new_positions(state: dict) -> list:
         # MAX_POSITION_PCT of total funds, full stop, regardless of what
         # the risk formula alone would allow.
         if capital_needed > max_position_capital:
-            quantity = int(max_position_capital // sig["entry"])
+            quantity = int(max_position_capital // fill)
             if quantity <= 0:
                 continue  # can't buy even 1 share within the cap (very expensive stock, small account)
-            capital_needed = round(quantity * sig["entry"], 2)
+            capital_needed = round(quantity * fill, 2)
 
-        if capital_needed > state["cash"]:
+        entry_cost = round(capital_needed * COMMISSION, 2)
+        if capital_needed + entry_cost > state["cash"]:
             continue
-        state["cash"] -= capital_needed
+        state["cash"] -= capital_needed + entry_cost
         state["positions"][sig["symbol"]] = {
-            "strategy": sig["strategy"], "entry_price": sig["entry"], "quantity": quantity,
-            "stop_loss": sig["stop_loss"], "target1": sig["target1"],
+            "strategy": sig["strategy"], "entry_price": fill, "signal_entry_price": sig["entry"],
+            "quantity": quantity, "stop_loss": sig["stop_loss"], "target1": sig["target1"],
             "entry_time": datetime.now(timezone.utc).isoformat(), "capital_allocated": capital_needed,
+            "entry_cost": entry_cost,
         }
-        opened.append({"symbol": sig["symbol"], "strategy": sig["strategy"], "entry_price": sig["entry"],
+        opened.append({"symbol": sig["symbol"], "strategy": sig["strategy"], "entry_price": fill,
                         "quantity": quantity, "capital_allocated": capital_needed})
     return opened
 

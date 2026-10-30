@@ -16,7 +16,47 @@ from indicators import ema, sma, rsi, adx, atr, session_vwap, orb_high, orb_low,
 SQUARE_OFF_TIME = dt.time(15, 20)  # NSE closes 15:30; flatten 10 min early
 
 
-class IntradayMomentum(Strategy):
+def square_off_flags(index) -> np.ndarray:
+    """
+    True on every bar where an open position must be closed (and no new one
+    opened) so the exit FILLS the same session. backtesting.py fills a
+    close() placed on bar i at bar i+1's open, so flagging "bar i is at/after
+    15:20" (the old rule) filled at the next bar — which, when bar i was the
+    session's last bar, was the next MORNING's 09:15 open. yfinance drops the
+    15:20 bar in ~60% of NSE sessions, so this leaked overnight constantly
+    (see AUDIT.md §3).
+
+    Flag bar i when either:
+      - bar i+1 would start at/after SQUARE_OFF_TIME (time_i + one bar), or
+      - bar i+1 is the last bar present for that session (bar i+2 is on a
+        different date).
+    The second rule peeks at the next two bars' TIMESTAMPS only (never their
+    prices) — live, you always know the session's end. At the end of the
+    data (the scanner's forming bar) there's no i+2, so only the clock rule
+    applies there.
+    """
+    idx = pd.DatetimeIndex(index)
+    if len(idx) < 2:
+        return np.zeros(len(idx), dtype=bool)
+    bar = pd.Series(idx).diff().median()
+    clock = np.array([(t + bar).time() >= SQUARE_OFF_TIME for t in idx])
+    dates = pd.Series(idx.date)
+    after_next = dates.shift(-2)
+    next_is_last = (after_next.notna() & (after_next != dates)).to_numpy()
+    return clock | next_is_last
+
+
+class IntradayStrategy(Strategy):
+    """Shared end-of-session guard for every intraday strategy below."""
+
+    def init(self):
+        self.square_off = self.I(square_off_flags, self.data.index, plot=False)
+
+    def is_square_off_bar(self) -> bool:
+        return bool(self.square_off[-1])
+
+
+class IntradayMomentum(IntradayStrategy):
     """
     VWAP + EMA-stack + ADX momentum continuation on intraday bars.
     Adapted from the same rule family as MomentumContinuation
@@ -31,6 +71,7 @@ class IntradayMomentum(Strategy):
     atr_mult = 1.5
 
     def init(self):
+        super().init()
         c, h, l, v = self.data.Close, self.data.High, self.data.Low, self.data.Volume
         self.vwap = self.I(session_vwap, h, l, c, v, self.data.index)
         self.ema_f = self.I(ema, c, self.ema_fast)
@@ -47,9 +88,6 @@ class IntradayMomentum(Strategy):
             and self.rsi_floor <= self.rsi[-1] < self.rsi_ceiling
         )
 
-    def is_square_off_bar(self) -> bool:
-        return self.data.index[-1].time() >= SQUARE_OFF_TIME
-
     def next(self):
         if self.position:
             if self.is_square_off_bar() or self.ema_f[-1] < self.ema_s[-1]:
@@ -61,7 +99,7 @@ class IntradayMomentum(Strategy):
             self.buy(sl=self.data.Close[-1] - self.atr_mult * self.atr[-1])
 
 
-class ORBBreakout(Strategy):
+class ORBBreakout(IntradayStrategy):
     """
     Classic opening-range breakout: mark the high/low of the first
     `or_bars` bars of the session, buy a close above the range high,
@@ -72,13 +110,11 @@ class ORBBreakout(Strategy):
     atr_mult = 1.0
 
     def init(self):
+        super().init()
         h, l, c = self.data.High, self.data.Low, self.data.Close
         self.or_high = self.I(orb_high, h, l, self.data.index, self.or_bars)
         self.or_low = self.I(orb_low, h, l, self.data.index, self.or_bars)
         self.atr = self.I(atr, h, l, c, 14)
-
-    def is_square_off_bar(self) -> bool:
-        return self.data.index[-1].time() >= SQUARE_OFF_TIME
 
     def next(self):
         if self.position:
@@ -92,7 +128,7 @@ class ORBBreakout(Strategy):
             self.buy(sl=stop)
 
 
-class VWAPBreakout(Strategy):
+class VWAPBreakout(IntradayStrategy):
     """
     Enter on the bar price CROSSES above VWAP with volume confirmation —
     a reclaim event, not "is currently above VWAP" (IntradayMomentum's
@@ -102,13 +138,11 @@ class VWAPBreakout(Strategy):
     vol_mult = 1.5  # bar volume vs 20-bar average, confirms the break isn't on thin volume
 
     def init(self):
+        super().init()
         h, l, c, v = self.data.High, self.data.Low, self.data.Close, self.data.Volume
         self.vwap = self.I(session_vwap, h, l, c, v, self.data.index)
         self.atr = self.I(atr, h, l, c, 14)
         self.vol_avg = self.I(sma, v, 20)
-
-    def is_square_off_bar(self) -> bool:
-        return self.data.index[-1].time() >= SQUARE_OFF_TIME
 
     def next(self):
         if self.position:
@@ -123,7 +157,7 @@ class VWAPBreakout(Strategy):
             self.buy(sl=self.data.Close[-1] - self.atr_mult * self.atr[-1])
 
 
-class RangeReversion(Strategy):
+class RangeReversion(IntradayStrategy):
     """
     Intraday range/mean-reversion — the opposite regime from the other
     three strategies here, which are all directional. Per the PDF this
@@ -139,15 +173,13 @@ class RangeReversion(Strategy):
     atr_mult = 1.0
 
     def init(self):
+        super().init()
         h, l, c = self.data.High, self.data.Low, self.data.Close
         self.support = self.I(rolling_min, l, self.range_bars)
         self.resistance = self.I(rolling_max, h, self.range_bars)
         self.rsi = self.I(rsi, c, 14)
         self.adx = self.I(adx, h, l, c, 14)
         self.atr = self.I(atr, h, l, c, 14)
-
-    def is_square_off_bar(self) -> bool:
-        return self.data.index[-1].time() >= SQUARE_OFF_TIME
 
     def next(self):
         if self.position:

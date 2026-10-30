@@ -1,0 +1,134 @@
+=== Mon Oct 19 11:31:10 IST 2026 (manual catch-up) ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 44569.9,
+  "open_position_count": 5,
+  "current_equity": 104017.86,
+  "vs_benchmark": {
+    "benchmark": "SPY",
+    "since": "2026-10-16T10:53:07.649480+00:00",
+    "tracker_return_pct": -0.2,
+    "benchmark_return_pct": -1.11,
+    "excess_pct": 0.91
+  },
+  "order_sheet": "/Users/classplus/Git/market-agent/research/us_order_sheets/2026-10-19.md",
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. USD, not INR. This daily strategy library was walk-forward tested only on NSE names (0-for-7) \u2014 never tested on US stocks before today. UNVALIDATED in every sense on this universe. Exit detection is a periodic-polling approximation, not a real stop order. Meant to be run ONCE PER DAY \u2014 running more often than daily bars update won't change anything."
+}
+=== Tue Oct 20 07:00:01 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 44569.9,
+  "open_position_count": 5,
+  "current_equity": 104017.86,
+  "vs_benchmark": {
+    "benchmark": "SPY",
+    "since": "2026-10-16T10:53:07.649480+00:00",
+    "tracker_return_pct": -0.2,
+    "benchmark_return_pct": -1.11,
+    "excess_pct": 0.91
+  },
+  "order_sheet": "/Users/classplus/Git/market-agent/research/us_order_sheets/2026-10-20.md",
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. USD, not INR. This daily strategy library was walk-forward tested only on NSE names (0-for-7) \u2014 never tested on US stocks before today. UNVALIDATED in every sense on this universe. Exit detection is a periodic-polling approximation, not a real stop order. Meant to be run ONCE PER DAY \u2014 running more often than daily bars update won't change anything."
+}
+=== Wed Oct 21 07:16:56 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 44569.9,
+  "open_position_count": 5,
+  "current_equity": 103434.05,
+  "vs_benchmark": {
+    "benchmark": "SPY",
+    "error": "benchmark price unavailable this run"
+  },
+  "order_sheet": "/Users/classplus/Git/market-agent/research/us_order_sheets/2026-10-21.md",
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. USD, not INR. This daily strategy library was walk-forward tested only on NSE names (0-for-7) \u2014 never tested on US stocks before today. UNVALIDATED in every sense on this universe. Exit detection is a periodic-polling approximation, not a real stop order. Meant to be run ONCE PER DAY \u2014 running more often than daily bars update won't change anything."
+}
+=== Thu Oct 22 07:14:07 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 44569.9,
+  "open_position_count": 5,
+  "current_equity": 103434.05,
+  "vs_benchmark": {
+    "benchmark": "SPY",
+    "since": "2026-10-16T10:53:07.649480+00:00",
+    "tracker_return_pct": -0.76,
+    "benchmark_return_pct": -0.36,
+    "excess_pct": -0.4
+  },
+  "order_sheet": "/Users/classplus/Git/market-agent/research/us_order_sheets/2026-10-22.md",
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. USD, not INR. This daily strategy library was walk-forward tested only on NSE names (0-for-7) \u2014 never tested on US stocks before today. UNVALIDATED in every sense on this universe. Exit detection is a periodic-polling approximation, not a real stop order. Meant to be run ONCE PER DAY \u2014 running more often than daily bars update won't change anything."
+}
+=== Fri Oct 23 07:08:27 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [
+    {
+      "symbol": "IEX",
+      "strategy": "sma_cross",
+      "entry_price": 236.42,
+      "exit_price": 226.8800048828125,
+      "quantity": 59,
+      "costs": 68.33,
+      "pnl": -631.19,
+      "pnl_pct": -4.53,
+      "entry_time": "2026-10-16T10:53:07.649475+00:00",
+      "exit_time": "2026-10-23T01:54:22.890619+00:00",
+      "exit_reason": "strategy_exit"
+    }
+  ],
+  "opened_positions": [
+    {
+      "symbol": "EOG",
+      "strategy": "sma_cross",
+      "entry_price": 157.96,
+      "quantity": 44,
+      "capital_allocated": 6950.24,
+      "stop_loss": 146.9
+    }
+  ],
+  "cash": 50954.74,
+  "open_position_count": 5,
+  "current_equity": 102559.71,
+  "vs_benchmark": {
+    "benchmark": "SPY",
+    "since": "2026-10-16T10:53:07.649480+00:00",
+    "tracker_return_pct": -1.6,
+    "benchmark_return_pct": -1.01,
+    "excess_pct": -0.58
+  },
+  "order_sheet": "/Users/classplus/Git/market-agent/research/us_order_sheets/2026-10-23.md",
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. USD, not INR. This daily strategy library was walk-forward tested only on NSE names (0-for-7) \u2014 never tested on US stocks before today. UNVALIDATED in every sense on this universe. Exit detection is a periodic-polling approximation, not a real stop order. Meant to be run ONCE PER DAY \u2014 running more often than daily bars update won't change anything."
+}
+=== Sat Oct 24 07:04:41 IST 2026 ===
+/Users/classplus/Git/market-agent/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+{
+  "closed_trades": [],
+  "opened_positions": [],
+  "cash": 50954.74,
+  "open_position_count": 5,
+  "current_equity": 102159.89,
+  "vs_benchmark": {
+    "benchmark": "SPY",
+    "since": "2026-10-16T10:53:07.649480+00:00",
+    "tracker_return_pct": -1.98,
+    "benchmark_return_pct": -1.53,
+    "excess_pct": -0.45
+  },
+  "order_sheet": "/Users/classplus/Git/market-agent/research/us_order_sheets/2026-10-24.md",
+  "disclaimer": "Simulated paper trading only \u2014 no real money, no real orders. USD, not INR. This daily strategy library was walk-forward tested only on NSE names (0-for-7) \u2014 never tested on US stocks before today. UNVALIDATED in every sense on this universe. Exit detection is a periodic-polling approximation, not a real stop order. Meant to be run ONCE PER DAY \u2014 running more often than daily bars update won't change anything."
+}

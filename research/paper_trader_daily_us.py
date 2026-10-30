@@ -30,7 +30,8 @@ today (only walk-forward tested on NSE names, where it went 0-for-7) —
 treat any result here as even less validated than the NSE daily tracker.
 
 Usage:
-  python paper_trader_daily_us.py --run
+  python paper_trader_daily_us.py --run                          # also writes us_order_sheets/<date>.md
+  python paper_trader_daily_us.py --run --real-capital-usd 1000  # size the order sheet for your real account
   python paper_trader_daily_us.py --report
   python paper_trader_daily_us.py --reset --confirm
 """
@@ -55,6 +56,14 @@ MAX_POSITION_PCT = 25.0
 RISK_PCT = 1.0
 BETA_PRIOR = 3
 FULL_TRUST_AT_TRADES = 20
+# Per-side cost for paper fills, set to INDmoney US brokerage (0.25%/order,
+# max $25) so the paper record matches what mirroring it in the INDmoney app
+# would actually cost. Higher than the backtest's 0.0005 on purpose. FX
+# spread on deposits/withdrawals is one-off and NOT modeled here.
+PAPER_COMMISSION = 0.0025
+BENCHMARK = "SPY"  # what this tracker has to beat to be worth following
+ORDER_SHEET_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "us_order_sheets")
+DEFAULT_REAL_CAPITAL_USD = 1000.0  # order sheet scales paper positions to this
 
 DISCLAIMER = (
     "Simulated paper trading only — no real money, no real orders. USD, not INR. "
@@ -124,21 +133,30 @@ def check_exits(state: dict) -> list:
         still_held = True  # default to "still held" on an inability to confirm — see paper_trader.py for why
         try:
             result = scan_ticker(symbol, strategy, 100_000, RISK_PCT)
-            still_held = result["count"] == 1 and result["signals"][0]["recommendation"].startswith("HOLD")
+            # "BUY" from the same strategy = still/again long, not an exit
+            # (treating it as an exit caused churn re-buys, AUDIT.md §5).
+            still_held = result["count"] == 1 and (
+                result["signals"][0]["recommendation"].startswith("HOLD")
+                or result["signals"][0]["recommendation"] == "BUY"
+            )
         except Exception:
             pass
 
         if not (stop_hit or not still_held):
             continue
 
-        exit_price = pos["stop_loss"] if stop_hit else current_price
-        pnl = (exit_price - pos["entry_price"]) * pos["quantity"]
-        state["cash"] += exit_price * pos["quantity"]
+        # Polled once a day, not a resting stop: if price is through the stop,
+        # the fill is the price we see, not the stop level (AUDIT.md §3).
+        exit_price = min(pos["stop_loss"], current_price) if stop_hit else current_price
+        exit_cost = exit_price * pos["quantity"] * PAPER_COMMISSION
+        pnl = (exit_price - pos["entry_price"]) * pos["quantity"] - pos.get("entry_cost", 0.0) - exit_cost
+        state["cash"] += exit_price * pos["quantity"] - exit_cost
 
         trade = {
             "symbol": symbol, "strategy": strategy,
             "entry_price": pos["entry_price"], "exit_price": exit_price, "quantity": pos["quantity"],
-            "pnl": round(pnl, 2), "pnl_pct": round((exit_price / pos["entry_price"] - 1) * 100, 2),
+            "costs": round(pos.get("entry_cost", 0.0) + exit_cost, 2),
+            "pnl": round(pnl, 2), "pnl_pct": round(pnl / (pos["entry_price"] * pos["quantity"]) * 100, 2),
             "entry_time": pos["entry_time"], "exit_time": datetime.now(timezone.utc).isoformat(),
             "exit_reason": "stop_loss" if stop_hit else "strategy_exit",
         }
@@ -173,39 +191,123 @@ def open_new_positions(state: dict) -> list:
             break
         if sig["recommendation"] != "BUY":
             continue
-        quantity, capital_needed = sig["quantity"], sig["capital_allocation"]
-        if quantity <= 0 or capital_needed <= 0:
+        # Fill at the latest close, not the backtest's EntryPrice (that bar's
+        # OPEN, already in the past when this runs — AUDIT.md §2). A real
+        # INDmoney order placed from the sheet fills near the next open.
+        fill = sig["current_price"]
+        if sig["stop_loss"] is not None and fill <= sig["stop_loss"]:
             continue
+        quantity = sig["quantity"]
+        if quantity <= 0:
+            continue
+        capital_needed = round(quantity * fill, 2)
 
         if capital_needed > max_position_capital:
-            quantity = int(max_position_capital // sig["entry"])
+            quantity = int(max_position_capital // fill)
             if quantity <= 0:
                 continue
-            capital_needed = round(quantity * sig["entry"], 2)
+            capital_needed = round(quantity * fill, 2)
 
-        if capital_needed > state["cash"]:
+        entry_cost = round(capital_needed * PAPER_COMMISSION, 2)
+        if capital_needed + entry_cost > state["cash"]:
             continue
-        state["cash"] -= capital_needed
+        state["cash"] -= capital_needed + entry_cost
         state["positions"][sig["symbol"]] = {
-            "strategy": sig["strategy"], "entry_price": sig["entry"], "quantity": quantity,
-            "stop_loss": sig["stop_loss"], "target1": sig["target1"],
+            "strategy": sig["strategy"], "entry_price": fill, "signal_entry_price": sig["entry"],
+            "quantity": quantity, "stop_loss": sig["stop_loss"], "target1": sig["target1"],
             "entry_time": datetime.now(timezone.utc).isoformat(), "capital_allocated": capital_needed,
+            "entry_cost": entry_cost,
         }
-        opened.append({"symbol": sig["symbol"], "strategy": sig["strategy"], "entry_price": sig["entry"],
-                        "quantity": quantity, "capital_allocated": capital_needed})
+        opened.append({"symbol": sig["symbol"], "strategy": sig["strategy"], "entry_price": fill,
+                        "quantity": quantity, "capital_allocated": capital_needed,
+                        "stop_loss": sig["stop_loss"]})
     return opened
 
 
-def run_cycle() -> dict:
+def _latest_close(symbol: str) -> float:
+    return float(load_data(symbol)[1].Close.iloc[-1])
+
+
+def _benchmark_line(state: dict, equity: float) -> dict:
+    """Tracker return vs SPY since the benchmark snapshot was taken."""
+    b = state.get("benchmark")
+    if not b:
+        return {}
+    try:
+        spy_now = _latest_close(b["symbol"])
+    except Exception:
+        return {"benchmark": b["symbol"], "error": "benchmark price unavailable this run"}
+    tracker_pct = (equity / b["start_equity"] - 1) * 100
+    spy_pct = (spy_now / b["start_price"] - 1) * 100
+    return {
+        "benchmark": b["symbol"], "since": b["start_time"],
+        "tracker_return_pct": round(tracker_pct, 2), "benchmark_return_pct": round(spy_pct, 2),
+        "excess_pct": round(tracker_pct - spy_pct, 2),
+    }
+
+
+def write_order_sheet(state: dict, closed: list, opened: list, report: dict, real_capital_usd: float) -> str:
+    """
+    INDmoney has no US trading API, so the bot can't place orders — this is
+    the manual hand-off: what to SELL/BUY in the INDmoney app today, with the
+    paper position scaled to `real_capital_usd` (fractional shares assumed).
+    """
+    equity = report["current_equity"]
+    scale = real_capital_usd / equity if equity else 0
+    today = datetime.now().strftime("%Y-%m-%d")
+    lines = [f"# US order sheet — {today}", "",
+             f"Paper equity ${equity:,.2f} · scaled to your real account of ${real_capital_usd:,.2f} "
+             f"(×{scale:.5f}, fractional shares). Place at/near the next US open (19:00 IST).", ""]
+    bm = report.get("vs_benchmark") or {}
+    if "tracker_return_pct" in bm:
+        lines += [f"**vs {bm['benchmark']} since {bm['since'][:10]}:** tracker {bm['tracker_return_pct']:+.2f}% · "
+                  f"{bm['benchmark']} {bm['benchmark_return_pct']:+.2f}% · excess {bm['excess_pct']:+.2f}%", ""]
+    lines += ["## SELL", ""]
+    if closed:
+        lines += [f"- SELL **all** {t['symbol']} ({t['exit_reason']}, paper fill ${t['exit_price']:.2f}, "
+                  f"paper P&L ${t['pnl']:+.2f})" for t in closed]
+    else:
+        lines.append("- none")
+    lines += ["", "## BUY", ""]
+    if opened:
+        for o in opened:
+            dollars = o["capital_allocated"] * scale
+            qty = o["quantity"] * scale
+            stop = f", stop ${o['stop_loss']:.2f}" if o.get("stop_loss") else ", no strategy stop"
+            lines.append(f"- BUY {o['symbol']}: ~${dollars:,.2f} (≈{qty:.4f} sh at ${o['entry_price']:.2f}{stop}) — {o['strategy']}")
+    else:
+        lines.append("- none")
+    lines += ["", "## Holding (no action)", ""]
+    new = {o["symbol"] for o in opened}
+    held = [h for h in report["open_positions"] if h["symbol"] not in new]
+    lines += [f"- {h['symbol']}: {h['quantity'] * scale:.4f} sh, paper P&L ${h['unrealized_pnl']:+.2f}" for h in held] or ["- none"]
+    lines += ["", f"_{DISCLAIMER}_", ""]
+    os.makedirs(ORDER_SHEET_DIR, exist_ok=True)
+    path = os.path.join(ORDER_SHEET_DIR, f"{today}.md")
+    with open(path, "w") as f:
+        f.write("\n".join(lines))
+    return path
+
+
+def run_cycle(real_capital_usd: float = DEFAULT_REAL_CAPITAL_USD) -> dict:
     state = load_state()
     closed = check_exits(state)
     opened = open_new_positions(state)
     state["last_run"] = datetime.now(timezone.utc).isoformat()
+    report = generate_report(state)
+    if not state.get("benchmark"):
+        # First run under the benchmark regime: snapshot equity and SPY now,
+        # so every later run reports tracker vs SPY from the same start.
+        state["benchmark"] = {"symbol": BENCHMARK, "start_price": _latest_close(BENCHMARK),
+                              "start_equity": report["current_equity"], "start_time": state["last_run"]}
+        report["vs_benchmark"] = _benchmark_line(state, report["current_equity"])
     save_state(state)
+    sheet = write_order_sheet(state, closed, opened, report, real_capital_usd)
     return {
         "closed_trades": closed, "opened_positions": opened,
         "cash": round(state["cash"], 2), "open_position_count": len(state["positions"]),
-        "disclaimer": DISCLAIMER,
+        "current_equity": report["current_equity"], "vs_benchmark": report.get("vs_benchmark"),
+        "order_sheet": sheet, "disclaimer": DISCLAIMER,
     }
 
 
@@ -243,6 +345,7 @@ def generate_report(state: dict = None) -> dict:
         "closed_trade_count": len(closed),
         "win_rate_pct": round(len(wins) / len(closed) * 100, 1) if closed else None,
         "open_positions": holdings,
+        "vs_benchmark": _benchmark_line(state, equity),
         "strategy_breakdown": state["strategy_stats"],
         "created_at": state["created_at"],
         "last_run": state["last_run"],
@@ -256,6 +359,8 @@ def main():
     p.add_argument("--report", action="store_true")
     p.add_argument("--reset", action="store_true")
     p.add_argument("--confirm", action="store_true")
+    p.add_argument("--real-capital-usd", type=float, default=DEFAULT_REAL_CAPITAL_USD,
+                   help="size the order sheet for your real INDmoney US balance")
     args = p.parse_args()
 
     if args.reset:
@@ -267,7 +372,7 @@ def main():
         return
 
     if args.run:
-        print(json.dumps(run_cycle(), indent=2, default=str))
+        print(json.dumps(run_cycle(args.real_capital_usd), indent=2, default=str))
         return
 
     if args.report or not (args.run or args.reset):
